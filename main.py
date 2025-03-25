@@ -34,11 +34,45 @@ def generate_teachers():
     header = ("teacher_id", "teacher", "department")
     data = []
 
-    request = requests.get("https://www.bths.edu/apps/staff/")
-    beautiful_soup = BeautifulSoup(request.content, "html.parser")
-    staff_category = beautiful_soup.find(id="staff").find_all(class_="staff-categoryStaffMember")
-    for a in staff_category:
-        print(a.dl.dt.get_text(strip=True), a.dl.dd.get_text(strip=True)) # doesn't fully work yet
+    departments = {
+        "Biology": 30105,
+        "Chemistry": 30106,
+        "Physics": 18378,
+        "CTE, Computer Science & Engineering": 18376,
+        "English": 18377,
+        "Health & PE": 18381,
+        "Mathematics": 18380,
+        "Social Studies": 18383,
+        "Special Education": 95973,
+        "Visual & Performing Arts": 314031,
+        "World Languages & ENL": 18379,
+    }
+
+    for department in departments:
+        request = requests.get(f"https://www.bths.edu/apps/pages/index.jsp?uREC_ID={departments[department]}&type=d&termREC_ID=&pREC_ID=staff")
+        beautiful_soup = BeautifulSoup(request.content, "html.parser")
+        staff_category = beautiful_soup.find(id="staff").find_all(class_="staff-categoryStaffMember")
+        for a in staff_category:
+            teacher = a.dl.dt.get_text(strip=True)
+            if ". " in teacher: # for Mr. or Ms. or Mrs. etc...
+                teacher = teacher.split(". ")[1]
+
+            data.append([teacher, department])
+
+    write_to_data_dir("teachers", header, index_data(data))
+
+# WILL BE RANDOM EVERY TIME
+def generate_students():
+    header = ("student_id", "first_name", "last_name")
+    data = []
+
+    faker = Faker()
+
+    for i in range(5000):
+        data.append([faker.first_name(), faker.last_name()])
+
+    write_to_data_dir("students", header, index_data(data))
+
 
 def main():
     check_data_dir()

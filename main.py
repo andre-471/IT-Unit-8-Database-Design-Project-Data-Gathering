@@ -3,6 +3,7 @@ import csv
 import requests
 from faker import Faker
 from bs4 import BeautifulSoup
+from DBConnection import DBConnection
 
 def check_data_dir():
     if not os.path.isdir('data'):
@@ -75,15 +76,17 @@ def generate_students():
 
 
 def main():
-    check_data_dir()
-    # generate_teachers()
+    DBConnection().disconnect()
+    
+    # check_data_dir()
+    # # generate_teachers()
 
-    # generate_students()
+    # # generate_students()
 
 
-    # generate_teachers()
+    # # generate_teachers()
 
-    generate_rooms()
+    # generate_rooms()
 
     # fake = Faker()
     # print(fake.name())

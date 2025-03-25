@@ -83,7 +83,7 @@ def main():
 
     # generate_teachers()
 
-    # generate_rooms()
+    generate_rooms()
 
     # fake = Faker()
     # print(fake.name())

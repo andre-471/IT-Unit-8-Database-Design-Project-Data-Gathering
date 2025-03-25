@@ -14,12 +14,12 @@ def write_to_data_dir(filename, header, data):
         writer.writerow(header)
         writer.writerows(data)
 
-def enumerate_data(data):
+def index_data(data):
     for i, row in enumerate(data, start=1):
         yield [i] + row  # Prepend the row number to each row
 
 def generate_rooms():
-    header = ["room_id", "room"]
+    header = ("room_id", "room")
     data = []
 
     for floor in ["B", "1", "2", "3", "4", "5", "6", "7", "8"]:
@@ -28,10 +28,10 @@ def generate_rooms():
                 room_number = f"{floor}{wing}{room:02d}"
                 data.append([room_number])
 
-    write_to_data_dir("rooms", header, enumerate_data(data))
+    write_to_data_dir("rooms", header, index_data(data))
 
 def generate_teachers():
-    header = ["teacher_id", "teacher"]
+    header = ("teacher_id", "teacher", "department")
     data = []
 
     request = requests.get("https://www.bths.edu/apps/staff/")
@@ -41,7 +41,11 @@ def generate_teachers():
         print(a.dl.dt.get_text(strip=True), a.dl.dd.get_text(strip=True)) # doesn't fully work yet
 
 def main():
-    # check_data_dir()
+    check_data_dir()
+    # generate_teachers()
+
+    # generate_students()
+
 
     # generate_teachers()
 

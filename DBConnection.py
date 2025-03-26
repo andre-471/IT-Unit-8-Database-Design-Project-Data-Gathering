@@ -48,5 +48,11 @@ class DBConnection:
         else:
             print("No connection to close")
 
-    # def 
+    def execute(self, query):
+        cursor = self.connection.cursor()
+
+        cursor.execute(query)
+
+        self.connection.commit()
+        cursor.close()
 

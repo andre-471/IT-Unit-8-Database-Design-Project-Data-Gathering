@@ -69,8 +69,6 @@ class DataGenerator:
                     ON DELETE CASCADE
             );""")
 
-        id = 1
-
         for row in DataGenerator._read_csv("teachers"):
             yield dedent("""\
                 INSERT INTO teachers

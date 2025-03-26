@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from faker import Faker
 from textwrap import dedent
 
+import os
+import csv
 import requests
 
 # for reference: https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html
@@ -25,24 +27,19 @@ class DataGenerator:
             [11, 'World Languages & ENL']
         ]
 
-        self.departments_staff_list = {
-            1: 30105,
-            2: 30106,
-            3: 18378,
-            4: 18376,
-            5: 18377,
-            6: 18381,
-            7: 18380,
-            8: 18383,
-            9: 95973,
-            10: 314031,
-            11: 18379,
-        }
 
     # @staticmethod
     # def _index_data(data):       
     #     for i, row in enumerate(data, start=1):
     #         yield [i] + row  # Prepend the row number to each row
+
+    @staticmethod
+    def _read_csv(filename):
+        with open(os.path.join('data', filename + ".csv"), 'r', newline='') as f:
+            reader = csv.reader(f)
+            next(reader) # skip first line
+            for row in reader:
+                yield row
 
     def generate_departments(self):
         yield dedent("""\
@@ -74,16 +71,7 @@ class DataGenerator:
 
         id = 1
 
-        for department_id in self.departments_staff_list:
-            request = requests.get(f"https://www.bths.edu/apps/pages/index.jsp?uREC_ID={self.departments_staff_list[department_id]}&type=d&termREC_ID=&pREC_ID=staff")
-            beautiful_soup = BeautifulSoup(request.content, "html.parser")
-            staff_category = beautiful_soup.find(id="staff").find_all(class_="staff-categoryStaffMember")
-            for element in staff_category:
-                teacher = element.dl.dt.get_text(strip=True)
-                if ". " in teacher: # for Mr. or Ms. or Mrs. etc...
-                    teacher = teacher.split(". ")[1:] # TODO: fix so that it doesn't break if there are more than one dot
-
-                yield dedent("""\
-                    INSERT INTO teachers
-                    VALUES ({}, '{}', {});""").format(id, teacher, department_id)
-                id += 1
+        for row in DataGenerator._read_csv("teachers"):
+            yield dedent("""\
+                INSERT INTO teachers
+                VALUES ({}, '{}', {});""").format(*row)

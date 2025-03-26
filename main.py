@@ -87,9 +87,11 @@ def main():
     # check_data_dir()
     # generate_teachers()
 
-    # for query in DataGenerator().generate_teachers():
-    #     print(query)
+    for query in DataGenerator().generate_teachers():
+        print(query)
     # generate_students()
+
+    # DataGenerator._read_csv("teachers")
 
 
     # # generate_teachers()

@@ -13,21 +13,6 @@ class DataGenerator:
         random.seed(seed)
         Faker.seed(seed)
 
-        self.departments = [
-            [1, 'Biology'],
-            [2, 'Chemistry'],
-            [3, 'Physics'],
-            [4, 'CS & Engineering'],
-            [5, 'English'],
-            [6, 'Health & PE'],
-            [7, 'Mathematics'],
-            [8, 'Social Studies'],
-            [9, 'Special Education'],
-            [10, 'Visual & Performing Arts'],
-            [11, 'World Languages & ENL']
-        ]
-
-
     # @staticmethod
     # def _index_data(data):       
     #     for i, row in enumerate(data, start=1):
@@ -73,3 +58,11 @@ class DataGenerator:
             yield dedent("""\
                 INSERT INTO teachers
                 VALUES ({}, '{}', {});""").format(*row)
+
+
+    def generate_students(self):
+        for i in range(1, 5001):
+            yield dedent("""\
+                INSERT INTO students
+                VALUES ({}, '{}', '{}');""").format(i, faker.first_name(), faker.last_name())
+   

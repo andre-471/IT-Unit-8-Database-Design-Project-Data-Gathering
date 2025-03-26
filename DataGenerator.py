@@ -50,7 +50,7 @@ class DataGenerator:
                 UNIQUE KEY dept_name (dept_name)
             );""") # idk if you need to repeat dept_name for UNIQUE KEY
         
-        for row in self.departments:
+        for row in DataGenerator._read_csv("departments"):
             yield dedent("""\
                 INSERT INTO departments
                 VALUES ({}, '{}');""").format(*row)

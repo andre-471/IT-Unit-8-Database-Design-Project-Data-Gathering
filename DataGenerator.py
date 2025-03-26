@@ -65,4 +65,27 @@ class DataGenerator:
             yield dedent("""\
                 INSERT INTO students
                 VALUES ({}, '{}', '{}');""").format(i, faker.first_name(), faker.last_name())
-   
+
+    def generate_course_offerings(self):
+        yield dedent("""\
+            CREATE TABLE course_offerings (
+                offering_id INT NOT NULL AUTO_INCREMENT,
+                crs_id INT NOT NULL,
+                room_id INT NOT NULL,
+                period INT NOT NULL,
+                teacher_id INT NOT NULL,
+                PRIMARY KEY (offering_id),
+                FOREIGN KEY (crs_id)
+                    REFERENCES courses (crs_id)
+                    ON DELETE CASCADE
+                FOREIGN KEY (room_id)
+                    REFERENCES rooms (room_id)
+                    ON DELETE CASCADE
+                UNIQUE KEY period (period)
+                FOREIGN KEY (teacher_id)
+                    REFERENCES teachers (teacher_id)
+                    ON DELETE CASCADE
+            );""")
+
+        id = 1
+

@@ -68,7 +68,7 @@ class DataGenerator:
                 PRIMARY KEY (teacher_id),
                 UNIQUE KEY teacher_name (teacher_name),
                 FOREIGN KEY (dept_id) 
-                    REFERENCES departments(dept_id)
+                    REFERENCES departments (dept_id)
                     ON DELETE CASCADE
             );""")
 

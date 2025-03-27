@@ -1,0 +1,111 @@
+crs_id,crs_type_id,crs_name
+1,1,Anatomy
+2,3,AP Biology
+3,3,AP Environmental Science
+4,3,AP Psychology
+5,1,Bioorganic Chemistry
+6,1,Genetics
+7,1,Intro to Neuroscience
+8,2,Living Environment
+9,1,Environmental Sustainability
+10,2,Regents Chemistry
+11,3,AP Chemistry
+12,1,Chemical Engineering
+13,1,MICA
+14,1,Quantitative Analysis
+15,1,Forensics
+16,3,AP CSP
+17,3,AP CSA
+18,1,Warehousing & Analytics
+19,1,Digital Electronics
+20,1,Digital Systems Design
+21,1,Fundamentals of IT Infrastructure
+22,1,Green Building Construction
+23,1,Engineering Design & Development
+24,1,English 9
+25,1,English 10
+26,3,AP Capstone Seminar
+27,2,English 11
+28,3,AP English Language & Composition
+29,3,AP Capstone Research
+30,3,AP English Literature & Composition
+31,1,Creative Writing
+32,1,Drama
+33,1,Film & Literature
+34,1,Journalism
+35,1,"Life, Love & Death"
+36,1,"Mystery, Horror & the Supernatural"
+37,1,Science Fiction & Fantasy
+38,1,Yearbook
+39,1,The Survey
+40,1,Physical Education
+41,1,Health
+42,1,Chinese I
+43,1,Chinese II
+44,1,Chinese III
+45,3,AP Chinese Language & Culture
+46,1,French I
+47,1,French II
+48,1,French III
+49,3,AP French Language & Culture
+50,1,German I
+51,1,German II
+52,1,German III
+53,3,AP German Language & Culture
+54,1,Italian I
+55,1,Italian II
+56,1,Italian III
+57,3,AP Italian Language & Culture
+58,1,Spanish I
+59,1,Spanish II
+60,1,Spanish III
+61,1,Spanish IIII
+62,3,AP Spanish Language & Culture
+63,3,AP Spanish Literature & Culture
+64,2,Algebra I
+65,2,Geometry
+66,2,Algebra II
+67,1,Pre-Calculus
+68,1,Calculus
+69,3,AP Calculus (AB)
+70,3,AP Calculus (BC)
+71,3,AP Statistics
+72,1,Multivariable Calculus
+73,1,Math Research
+74,1,Linear Algebra
+75,2,Regents Physics
+76,3,AP Physics I
+77,3,AP Physics II
+78,3,AP Physics C (Mechanics + E/M)
+79,1,Astronomy
+80,1,Modern Physics
+81,1,Pre-AP World History
+82,2,Regents Global History
+83,3,AP World History
+84,3,AP European History
+85,2,Regents American History
+86,3,AP US History
+87,1,Participation in Government
+88,3,AP US Government
+89,1,Economics
+90,3,AP Macroeconomics
+91,3,AP Microeconomics
+92,3,AP Comparative Government
+93,3,AP Psychology
+94,3,AP Human Geography
+95,1,Sociology
+96,1,Cultural Anthropology
+97,1,Physical Anthropology
+98,1,Adobe Digital Video
+99,1,Adobe Visual Design
+100,1,Architectural Drawing w/ CAD
+101,1,Digital Animation
+102,1,Industrial Design
+103,1,Media
+104,1,PLTW CEA
+105,1,PLTW DDP
+106,1,Orchestra
+107,1,Band
+108,1,Chorus
+109,1,Studio Art
+110,3,AP 2D Art and Design

@@ -81,7 +81,7 @@ class DataGenerator:
                 FOREIGN KEY (room_id)
                     REFERENCES rooms (room_id)
                     ON DELETE CASCADE
-                UNIQUE KEY period (period)
+                UNIQUE KEY period (period) -- Is room really that unique if it can repeat
                 FOREIGN KEY (teacher_id)
                     REFERENCES teachers (teacher_id)
                     ON DELETE CASCADE

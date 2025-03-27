@@ -104,3 +104,7 @@ class DataGenerator:
             );""")
 
         id = 1
+        for row in DataGenerator._read_csv("courses"):
+            yield dedent("""\
+                INSERT INTO courses
+                VALUES ({}, {}, {}, {}, {});""").format(*row)

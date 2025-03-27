@@ -7,11 +7,17 @@ import os
 import csv
 import requests
 
+
 # for reference: https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html
 class DataGenerator:
     def __init__(self, seed=None):
         random.seed(seed)
         Faker.seed(seed)
+
+        self.faker = Faker()
+
+        self.departments = {}
+        self.teachers = {}
 
     # @staticmethod
     # def _index_data(data):       
@@ -22,7 +28,7 @@ class DataGenerator:
     def _read_csv(filename):
         with open(os.path.join('data', filename + ".csv"), 'r', newline='') as f:
             reader = csv.reader(f)
-            next(reader) # skip first line
+            next(reader)  # skip header
             for row in reader:
                 yield row
 
@@ -33,13 +39,17 @@ class DataGenerator:
                 dept_name VARCHAR(255) NOT NULL,
                 PRIMARY KEY (dept_id),
                 UNIQUE KEY dept_name (dept_name)
-            );""") # idk if you need to repeat dept_name for UNIQUE KEY
-        
+            );""")  # idk if you need to repeat dept_name for UNIQUE KEY
+
         for row in DataGenerator._read_csv("departments"):
-            yield dedent("""\
+            dept_id, dept_name = row
+            dept_id = int(dept_id)
+
+            self.departments[dept_id] = dept_name
+
+            yield dedent(f"""\
                 INSERT INTO departments
-                VALUES ({}, '{}');""").format(*row)
-            
+                VALUES ({dept_id}, '{dept_name}');""")
 
     def generate_teachers(self):
         yield dedent("""\
@@ -55,16 +65,22 @@ class DataGenerator:
             );""")
 
         for row in DataGenerator._read_csv("teachers"):
-            yield dedent("""\
-                INSERT INTO teachers
-                VALUES ({}, '{}', {});""").format(*row)
+            teacher_id, teacher_name, dept_id = row
+            teacher_id, dept_id = int(teacher_id), int(dept_id)
 
+            self.teachers[teacher_id] = (teacher_name, dept_id)
+
+            yield dedent(f"""\
+                INSERT INTO teachers
+                VALUES ({teacher_id}, '{teacher_name}', {dept_id});""")
+
+        print(self.teachers)
 
     def generate_students(self):
         for i in range(1, 5001):
             yield dedent("""\
                 INSERT INTO students
-                VALUES ({}, '{}', '{}');""").format(i, faker.first_name(), faker.last_name())
+                VALUES ({}, '{}', '{}');""").format(i, self.faker.first_name(), faker.last_name())
 
     def generate_course_offerings(self):
         yield dedent("""\
@@ -88,4 +104,3 @@ class DataGenerator:
             );""")
 
         id = 1
-

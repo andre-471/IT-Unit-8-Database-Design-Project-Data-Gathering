@@ -77,10 +77,15 @@ class DataGenerator:
         print(self.teachers)
 
     def generate_students(self):
+        yield dedent("""\
+            CREATE TABLE students (
+                student_id INT NOT NULL AUTO_INCREMENT
+                """)
+
         for i in range(1, 5001):
             yield dedent("""\
                 INSERT INTO students
-                VALUES ({}, '{}', '{}');""").format(i, self.faker.first_name(), faker.last_name())
+                VALUES ({}, '{}', '{}');""").format(i, self.faker.first_name(), self.faker.last_name())
 
     def generate_course_offerings(self):
         yield dedent("""\

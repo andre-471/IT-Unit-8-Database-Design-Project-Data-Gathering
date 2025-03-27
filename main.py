@@ -4,7 +4,8 @@ import requests
 from faker import Faker
 from bs4 import BeautifulSoup
 from DBConnection import DBConnection
-from DataGenerator import DataGenerator
+from datagenerator import DataGenerator
+
 
 def check_data_dir():
     if not os.path.isdir('data'):
@@ -78,29 +79,13 @@ def generate_students():
 
 
 def main():
-        
-    # DBConnection().disconnect()
-
-    # for a in DataGenerator.departments:
-    #     print(a)
+    dg = DataGenerator("seed")
     
-    # check_data_dir()
-    # generate_teachers()
-
-    for query in DataGenerator().generate_teachers():
+    for query in dg.generate_grades():
         print(query)
-    # generate_students()
-
-    # DataGenerator._read_csv("teachers")
-
-
-    # # generate_teachers()
-
-    # generate_rooms()
-
-    # fake = Faker()
-    # print(fake.name())
     
+    for query in dg.generate_students():
+        print(query)
     
 
 if __name__ == "__main__":

@@ -87,6 +87,48 @@ class DataGenerator:
                 INSERT INTO students
                 VALUES ({}, '{}', '{}');""").format(i, self.faker.first_name(), self.faker.last_name())
 
+    def generate_course_type(self):
+        yield dedent("""\
+            CREATE TABLE course_type )
+                     crs_type_id INT NOT NULL,
+                     crs_type VARCHAR(255) NOT NULL,
+                     PRIMARY KEY (crs_type_id)
+            );""")
+
+    def generate_courses(self):
+        yield dedent("""\
+            CREATE TABLE courses )
+                crs_id INT NOT NULL,
+                crs_name VARCHAR(255) NOT NULL,
+                crs_type_id INT NOT NULL,
+                FOREIGN KEY (crs_type_id)
+                    REFERENCES course_tyoe (crs_type_id)
+                    ON DELETE CASCADE,
+                UNIQUE KEY crs_name (crs_name),
+                PRIMARY KEY (crs_id)
+            );""")
+
+    def generate_course_type(self):
+        yield dedent("""\
+            CREATE TABLE course_type )
+                     crs_type_id INT NOT NULL,
+                     crs_type VARCHAR(255) NOT NULL,
+                     PRIMARY KEY (crs_type_id)
+            );""")
+
+    def generate_courses(self):
+        yield dedent("""\
+            CREATE TABLE courses )
+                crs_id INT NOT NULL,
+                crs_name VARCHAR(255) NOT NULL,
+                crs_type_id INT NOT NULL,
+                FOREIGN KEY (crs_type_id)
+                    REFERENCES course_tyoe (crs_type_id)
+                    ON DELETE CASCADE,
+                UNIQUE KEY crs_name (crs_name),
+                PRIMARY KEY (crs_id)
+            );""")
+
     def generate_course_offerings(self):
         yield dedent("""\
             CREATE TABLE course_offerings (
@@ -113,3 +155,55 @@ class DataGenerator:
             yield dedent("""\
                 INSERT INTO courses
                 VALUES ({}, {}, {}, {}, {});""").format(*row)
+            
+    def generate_roster(self):
+        yield dedent("""\
+            CREATE TABLE roster (
+                offering_id INT NOT NULL,
+                student_id INT NOT NULL,
+                FOREIGN KEY (offering_id)
+                    REFERENCES COURSES_OFFERINGS (offering_id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (student_id)
+                    REFERENCE tudents (student_id)
+                    ON DELETE CASCADE,
+                PRIMARY KEY (offering_id)
+            );""")
+
+    def generate_assignment_type(self):
+        yield dedent("""\
+            CREATE TABLE assignment_type (
+                asg_type_id INT NOT NULL,
+                type VARCHAR(255) NOT NULL,
+                PRIMARY KEY (asg_type_id)
+            );""")    
+        
+    def generate_assignments(self):
+        yield dedent("""\
+            CREATE TABLE assignments (
+                asg_id INT NOT NULL AUTO_INCREMENT,
+                asg_name VARCHAR(255) NOT NULL,
+                asg_type_id INT NOT NULL,
+                offering_id INT NOT NULL,
+                FOREIGN KEY (offering_id)
+                    REFERENCES course_offerings (offering_id)
+                    ON DELETE CASCADE,
+                FOREIGN KEY (asg_type_id)
+                    REFERENCES assignment_type (asg_type_id)
+                    ON DELETE CASCADE,
+                PRIMARY KEY (asg_id)
+            );""")
+
+    def generate_grades(self):
+        yield dedent("""\
+            CREATE TABLE assignments (
+                student_id NOT NULL,
+                asg_id INT NOT NULL,
+                grade FLOAT NOT NULL,
+                FOREIGN KEY (student_ID)
+                     REFERNCES students (student_id)
+                     ON DELETE CASCADE,
+                FOREIGN KEY (asg_id)
+                     REFERENCES assignments (asg_id)
+                     ON DELETE CASCADE
+            );""")

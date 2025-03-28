@@ -1,11 +1,9 @@
 import random
-from bs4 import BeautifulSoup
 from faker import Faker
 from textwrap import dedent
 
 import os
 import csv
-import requests
 
 
 # for reference: https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html
@@ -108,27 +106,6 @@ class DataGenerator:
                 PRIMARY KEY (crs_id)
             );""")
 
-    def generate_course_type(self):
-        yield dedent("""\
-            CREATE TABLE course_type )
-                     crs_type_id INT NOT NULL,
-                     crs_type VARCHAR(255) NOT NULL,
-                     PRIMARY KEY (crs_type_id)
-            );""")
-
-    def generate_courses(self):
-        yield dedent("""\
-            CREATE TABLE courses )
-                crs_id INT NOT NULL,
-                crs_name VARCHAR(255) NOT NULL,
-                crs_type_id INT NOT NULL,
-                FOREIGN KEY (crs_type_id)
-                    REFERENCES course_tyoe (crs_type_id)
-                    ON DELETE CASCADE,
-                UNIQUE KEY crs_name (crs_name),
-                PRIMARY KEY (crs_id)
-            );""")
-
     def generate_course_offerings(self):
         yield dedent("""\
             CREATE TABLE course_offerings (
@@ -155,7 +132,7 @@ class DataGenerator:
             yield dedent("""\
                 INSERT INTO courses
                 VALUES ({}, {}, {}, {}, {});""").format(*row)
-            
+
     def generate_roster(self):
         yield dedent("""\
             CREATE TABLE roster (
@@ -176,8 +153,8 @@ class DataGenerator:
                 asg_type_id INT NOT NULL,
                 type VARCHAR(255) NOT NULL,
                 PRIMARY KEY (asg_type_id)
-            );""")    
-        
+            );""")
+
     def generate_assignments(self):
         yield dedent("""\
             CREATE TABLE assignments (

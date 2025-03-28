@@ -6,9 +6,11 @@ from bs4 import BeautifulSoup
 from dbconnection import DBConnection
 from datagenerator import DataGenerator
 
+
 def check_data_dir():
     if not os.path.isdir('data'):
         os.mkdir('data')
+
 
 def write_to_data_dir(filename, header, data):
     with open(os.path.join('data', filename + ".csv"), 'w', newline='') as f:
@@ -16,9 +18,11 @@ def write_to_data_dir(filename, header, data):
         writer.writerow(header)
         writer.writerows(data)
 
+
 def index_data(data):
     for i, row in enumerate(data, start=1):
         yield [i] + row  # Prepend the row number to each row
+
 
 def generate_rooms():
     header = ("room_id", "room")
@@ -31,6 +35,7 @@ def generate_rooms():
                 data.append([room_number])
 
     write_to_data_dir("rooms", header, index_data(data))
+
 
 def generate_teachers():
     header = ("teacher_id", "teacher", "department")
@@ -51,17 +56,19 @@ def generate_teachers():
     }
 
     for department in departments:
-        request = requests.get(f"https://www.bths.edu/apps/pages/index.jsp?uREC_ID={departments[department]}&type=d&termREC_ID=&pREC_ID=staff")
+        request = requests.get(
+            f"https://www.bths.edu/apps/pages/index.jsp?uREC_ID={departments[department]}&type=d&termREC_ID=&pREC_ID=staff")
         beautiful_soup = BeautifulSoup(request.content, "html.parser")
         staff_category = beautiful_soup.find(id="staff").find_all(class_="staff-categoryStaffMember")
         for a in staff_category:
             teacher = a.dl.dt.get_text(strip=True)
-            if ". " in teacher: # for Mr. or Ms. or Mrs. etc...
+            if ". " in teacher:  # for Mr. or Ms. or Mrs. etc...
                 teacher = teacher.split(". ")[1]
 
             data.append([teacher, department])
 
     write_to_data_dir("teachers", header, index_data(data))
+
 
 # WILL BE RANDOM EVERY TIME
 def generate_students():
@@ -78,30 +85,14 @@ def generate_students():
 
 
 def main():
-        
-    # DBConnection().disconnect()
+    dg = DataGenerator("seed")
 
-    # for a in DataGenerator.departments:
-    #     print(a)
-    
-    # check_data_dir()
-    # generate_teachers()
-
-    for query in DataGenerator().generate_teachers():
+    for query in dg.generate_grades():
         print(query)
-    # generate_students()
 
-    # DataGenerator._read_csv("teachers")
+    for query in dg.generate_students():
+        print(query)
 
-
-    # # generate_teachers()
-
-    # generate_rooms()
-
-    # fake = Faker()
-    # print(fake.name())
-    
-    
 
 if __name__ == "__main__":
     main()

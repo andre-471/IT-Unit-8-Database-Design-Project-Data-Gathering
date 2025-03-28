@@ -40,7 +40,7 @@ class DataGenerator:
                 dept_id INT NOT NULL AUTO_INCREMENT,
                 dept_name VARCHAR(255) NOT NULL,
                 PRIMARY KEY (dept_id),
-                UNIQUE KEY dept_name (dept_name)
+                UNIQUE KEY (dept_name)
             );""")
 
         for row in DataGenerator.__read_csv("departments"):
@@ -59,7 +59,7 @@ class DataGenerator:
                 teacher_name VARCHAR(255) NOT NULL,
                 dept_id INT NOT NULL,
                 PRIMARY KEY (teacher_id),
-                UNIQUE KEY teacher_name (teacher_name),
+                UNIQUE KEY (teacher_name),
                 FOREIGN KEY (dept_id) 
                     REFERENCES departments (dept_id)
                     ON DELETE CASCADE
@@ -83,7 +83,7 @@ class DataGenerator:
                 room_id INT NOT NULL AUTO_INCREMENT,
                 room VARCHAR(255) NOT NULL,
                 PRIMARY KEY (room_id),
-                UNIQUE KEY room (room)
+                UNIQUE KEY(room)
             );""")
 
         room_id = 1
@@ -122,7 +122,7 @@ class DataGenerator:
                 crs_type_id INT NOT NULL,
                 crs_type VARCHAR(255) NOT NULL,
                 PRIMARY KEY (crs_type_id),
-                UNIQUE KEY crs_type (crs_type)
+                UNIQUE KEY (crs_type)
             );""")
 
         for row in DataGenerator.__read_csv("course_types"):
@@ -142,7 +142,7 @@ class DataGenerator:
                 crs_name VARCHAR(255) NOT NULL,
                 crs_type_id INT NOT NULL,
                 PRIMARY KEY (crs_id),
-                UNIQUE KEY crs_name (crs_name),
+                UNIQUE KEY (crs_name),
                 FOREIGN KEY (crs_type_id)
                     REFERENCES course_type (crs_type_id)
                     ON DELETE CASCADE

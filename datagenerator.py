@@ -14,8 +14,8 @@ class DataGenerator:
 
         self.faker = Faker()
 
-        self.departments = {}
-        self.teachers = {}
+        self.teachers: set[int] = set()
+        self.rooms: set[int] = set()
 
     # @staticmethod
     # def _index_data(data):       
@@ -43,8 +43,6 @@ class DataGenerator:
             dept_id, dept_name = row
             dept_id = int(dept_id)
 
-            self.departments[dept_id] = dept_name
-
             yield dedent(f"""\
                 INSERT INTO departments
                 VALUES ({dept_id}, '{dept_name}');""")
@@ -66,13 +64,35 @@ class DataGenerator:
             teacher_id, teacher_name, dept_id = row
             teacher_id, dept_id = int(teacher_id), int(dept_id)
 
-            self.teachers[teacher_id] = (teacher_name, dept_id)
+            self.teachers.add(teacher_id)
 
             yield dedent(f"""\
                 INSERT INTO teachers
                 VALUES ({teacher_id}, '{teacher_name}', {dept_id});""")
 
         print(self.teachers)
+
+    def generate_rooms(self):
+        yield dedent("""\
+            CREATE TABLE rooms (
+                room_id INT NOT NULL AUTO_INCREMENT,
+                room VARCHAR(255) NOT NULL,
+                PRIMARY KEY (room_id),
+                UNIQUE KEY room (room)
+            );""")
+
+        room_id = 1
+        for floor in ["B", "1", "2", "3", "4", "5", "6", "7", "8"]:
+            for wing in ["N", "E", "S", "W"]:
+                for number in range(1, 21):
+                    room = f"{floor}{wing}{number:02d}"
+
+                    self.rooms.add(room_id)
+
+                    yield dedent(f"""\
+                        INSERT INTO rooms
+                        VALUES ({room_id}, '{room}');""")
+                    room_id += 1
 
     def generate_students(self):
         yield dedent("""\

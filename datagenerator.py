@@ -1,4 +1,6 @@
 import random
+from collections import defaultdict
+
 from faker import Faker
 from textwrap import dedent
 
@@ -19,6 +21,7 @@ class DataGenerator:
         self.rooms: list[int] = []
         self.courses: list[int] = []
         self.course_types: list[int] = []
+        self.course_offerings_per_period: dict[int, list[int]] = defaultdict(list)
 
     # @staticmethod
     # def _index_data(data):       
@@ -191,6 +194,8 @@ class DataGenerator:
                 room_id = rooms_per_period[period].pop()
                 teacher_id = teachers_per_period[period].pop()
 
+                self.course_offerings_per_period[period].append(offering_id)
+
                 yield dedent(f"""\
                     INSERT INTO course_offerings
                     VALUES ({offering_id}, {crs_id}, {room_id}, {period}, {teacher_id});""")
@@ -201,17 +206,25 @@ class DataGenerator:
     def generate_roster(self):
         yield dedent("""\
             CREATE TABLE roster (
-                offering_id INT NOT NULL,
                 student_id INT NOT NULL,
-                FOREIGN KEY (offering_id)
-                    REFERENCES COURSES_OFFERINGS (offering_id)
-                    ON DELETE CASCADE,
+                offering_id INT NOT NULL,
+                PRIMARY KEY (studednt_id, offering_id),
                 FOREIGN KEY (student_id)
-                    REFERENCE students (student_id)
+                    REFERENCES students (student_id)
                     ON DELETE CASCADE,
-                PRIMARY KEY (offering_id)
+                FOREIGN KEY (offering_id)
+                    REFERENCES course_offerings (offering_id)
+                    ON DELETE CASCADE
             );""")
-        # for row in DataGenerator.__read_csv(""):
+
+        for student_id in self.students:
+            for period in range(1, 11):
+                offering_id = random.choice(self.course_offerings_per_period[period])
+
+                yield dedent(f"""\
+                    INSERT INTO roster
+                    VALUES ({student_id}, {offering_id});""")
+
 
     def generate_assignment_type(self):
         yield dedent("""\
@@ -221,9 +234,9 @@ class DataGenerator:
                 PRIMARY KEY (asg_type_id)
             );""")
         for row in DataGenerator.__read_csv("assignment_type"):
-            asg_type_id, type = row
+            asg_type_id, asg_type = row
             asg_type = int(asg_type)
-            self.assignment_types.append(asg_type_id)
+            # self.assignment_types.append(asg_type_id)  do we need this?
 
             yield dedent(f"""\
                 INSERT INTO assignment_type
@@ -245,6 +258,16 @@ class DataGenerator:
                     ON DELETE CASCADE,
                 PRIMARY KEY (asg_id)
             );""")
+
+        asg_id = 1
+        for offering_id in self.course_offerings_per_period.values():
+            for _ in range(12):
+                asg_name = self.faker.sentence()
+                asg_type_id = random.choice(self.assignment_types)
+                yield dedent(f"""\
+                    INSERT INTO assignments
+                    VALUES ({asg_id}, {asg_name}, {asg_type_id}, {offering_id});""")
+                asg_id += 1
 
     def generate_grades(self):
         yield dedent("""\

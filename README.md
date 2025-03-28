@@ -22,7 +22,7 @@ for rosters:
 for assignment:
 - ez lol just for every offering create an assignment
 
-for offering:
+for grades:
 - for every student_id in roster, get offering_id
 - query assignments for asg_id for each offering_id
 - loop through each asg_id and add it for student

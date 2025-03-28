@@ -25,7 +25,7 @@ class DataGenerator:
     #         yield [i] + row  # Prepend the row number to each row
 
     @staticmethod
-    def _read_csv(filename):
+    def __read_csv(filename):
         with open(os.path.join('data', filename + ".csv"), 'r', newline='') as f:
             reader = csv.reader(f)
             next(reader)  # skip header
@@ -41,7 +41,7 @@ class DataGenerator:
                 UNIQUE KEY dept_name (dept_name)
             );""")  # idk if you need to repeat dept_name for UNIQUE KEY
 
-        for row in DataGenerator._read_csv("departments"):
+        for row in DataGenerator.__read_csv("departments"):
             dept_id, dept_name = row
             dept_id = int(dept_id)
 
@@ -64,7 +64,7 @@ class DataGenerator:
                     ON DELETE CASCADE
             );""")
 
-        for row in DataGenerator._read_csv("teachers"):
+        for row in DataGenerator.__read_csv("teachers"):
             teacher_id, teacher_name, dept_id = row
             teacher_id, dept_id = int(teacher_id), int(dept_id)
 
@@ -151,7 +151,7 @@ class DataGenerator:
             );""")
 
         id = 1
-        for row in DataGenerator._read_csv("courses"):
+        for row in DataGenerator.__read_csv("courses"):
             yield dedent("""\
                 INSERT INTO courses
                 VALUES ({}, {}, {}, {}, {});""").format(*row)

@@ -3,8 +3,8 @@ import csv
 import requests
 from faker import Faker
 from bs4 import BeautifulSoup
-from DBConnection import DBConnection
-from DataGenerator import DataGenerator
+from dbconnection import DBConnection
+from datagenerator import DataGenerator
 
 def check_data_dir():
     if not os.path.isdir('data'):

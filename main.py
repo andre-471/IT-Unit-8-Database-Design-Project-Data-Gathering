@@ -1,5 +1,7 @@
 import os
 import csv
+import random
+
 import requests
 from faker import Faker
 from bs4 import BeautifulSoup
@@ -85,12 +87,22 @@ def generate_students():
 
 
 def main():
+    # test = [1, 2, 3, 4]
+    #
+    # for _ in range(5):
+    #     print(random.sample(test, len(test)))
 
+    dg = DataGenerator("seed")
 
-    # dg = DataGenerator("seed")
+    for query in dg.generate_rooms():
+        pass
+    for query in dg.generate_courses():
+        pass
+    for query in dg.generate_teachers():
+        pass
 
-    # for query in dg.generate_grades():
-    #     print(query)
+    for query in dg.generate_course_offerings():
+        print(query)
     #
     # for query in dg.generate_students():
     #     print(query)

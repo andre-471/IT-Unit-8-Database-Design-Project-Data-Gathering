@@ -14,8 +14,9 @@ class DataGenerator:
 
         self.faker = Faker()
 
-        self.teachers: set[int] = set()
-        self.rooms: set[int] = set()
+        self.teachers: list[int] = []
+        self.students: list[int] = []
+        self.rooms: list[int] = []
 
     # @staticmethod
     # def _index_data(data):       
@@ -37,7 +38,7 @@ class DataGenerator:
                 dept_name VARCHAR(255) NOT NULL,
                 PRIMARY KEY (dept_id),
                 UNIQUE KEY dept_name (dept_name)
-            );""")  # idk if you need to repeat dept_name for UNIQUE KEY
+            );""")
 
         for row in DataGenerator.__read_csv("departments"):
             dept_id, dept_name = row
@@ -64,7 +65,7 @@ class DataGenerator:
             teacher_id, teacher_name, dept_id = row
             teacher_id, dept_id = int(teacher_id), int(dept_id)
 
-            self.teachers.add(teacher_id)
+            self.teachers.append(teacher_id)
 
             yield dedent(f"""\
                 INSERT INTO teachers
@@ -87,7 +88,7 @@ class DataGenerator:
                 for number in range(1, 21):
                     room = f"{floor}{wing}{number:02d}"
 
-                    self.rooms.add(room_id)
+                    self.rooms.append(room_id)
 
                     yield dedent(f"""\
                         INSERT INTO rooms
@@ -97,33 +98,39 @@ class DataGenerator:
     def generate_students(self):
         yield dedent("""\
             CREATE TABLE students (
-                student_id INT NOT NULL AUTO_INCREMENT
+                student_id INT NOT NULL AUTO_INCREMENT,
+                first_name VARCHAR(255) NOT NULL,
+                last_name VARCHAR(255) NOT NULL,
+                PRIMARY KEY (student_id)
                 """)
 
-        for i in range(1, 5001):
+        for student_id in range(1, 5001):
+            self.students.append(student_id)
+
             yield dedent("""\
                 INSERT INTO students
-                VALUES ({}, '{}', '{}');""").format(i, self.faker.first_name(), self.faker.last_name())
+                VALUES ({}, '{}', '{}');""").format(student_id, self.faker.first_name(), self.faker.last_name())
 
     def generate_course_type(self):
         yield dedent("""\
-            CREATE TABLE course_type )
-                     crs_type_id INT NOT NULL,
-                     crs_type VARCHAR(255) NOT NULL,
-                     PRIMARY KEY (crs_type_id)
+            CREATE TABLE course_type (
+                crs_type_id INT NOT NULL,
+                crs_type VARCHAR(255) NOT NULL,
+                PRIMARY KEY (crs_type_id),
+                UNIQUE KEY crs_type (crs_type)
             );""")
 
     def generate_courses(self):
         yield dedent("""\
-            CREATE TABLE courses )
+            CREATE TABLE courses (
                 crs_id INT NOT NULL,
                 crs_name VARCHAR(255) NOT NULL,
                 crs_type_id INT NOT NULL,
-                FOREIGN KEY (crs_type_id)
-                    REFERENCES course_tyoe (crs_type_id)
-                    ON DELETE CASCADE,
+                PRIMARY KEY (crs_id),
                 UNIQUE KEY crs_name (crs_name),
-                PRIMARY KEY (crs_id)
+                FOREIGN KEY (crs_type_id)
+                    REFERENCES course_type (crs_type_id)
+                    ON DELETE CASCADE
             );""")
 
     def generate_course_offerings(self):
@@ -137,17 +144,25 @@ class DataGenerator:
                 PRIMARY KEY (offering_id),
                 FOREIGN KEY (crs_id)
                     REFERENCES courses (crs_id)
-                    ON DELETE CASCADE
+                    ON DELETE CASCADE,
                 FOREIGN KEY (room_id)
                     REFERENCES rooms (room_id)
-                    ON DELETE CASCADE
-                UNIQUE KEY period (period) -- Is room really that unique if it can repeat
+                    ON DELETE CASCADE,
                 FOREIGN KEY (teacher_id)
                     REFERENCES teachers (teacher_id)
                     ON DELETE CASCADE
             );""")
 
-        id = 1
+        rooms_per_period = {}
+        teachers_per_period = {}
+        for period in range(1, 11):
+            rooms_per_period[period] = random.ch self.rooms.copy()
+            teachers_per_period[period] = set(self.teachers.copy())
+
+
+
+
+        offering_id = 1
         for row in DataGenerator.__read_csv("courses"):
             yield dedent("""\
                 INSERT INTO courses

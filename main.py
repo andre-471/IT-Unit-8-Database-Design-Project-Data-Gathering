@@ -85,7 +85,9 @@ def generate_students():
 
 
 def main():
-    dg = DataGenerator("seed")
+
+
+    # dg = DataGenerator("seed")
 
     # for query in dg.generate_grades():
     #     print(query)
@@ -93,8 +95,8 @@ def main():
     # for query in dg.generate_students():
     #     print(query)
 
-    for query in dg.generate_rooms():
-        print(query)
+    # for query in dg.generate_rooms():
+    #     print(query)
 
 
 if __name__ == "__main__":

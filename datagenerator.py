@@ -147,7 +147,7 @@ class DataGenerator:
                 PRIMARY KEY (crs_id),
                 UNIQUE KEY (crs_name),
                 FOREIGN KEY (crs_type_id)
-                    REFERENCES course_type (crs_type_id)
+                    REFERENCES course_types (crs_type_id)
                     ON DELETE CASCADE
             );""")
 
@@ -210,7 +210,7 @@ class DataGenerator:
             CREATE TABLE roster (
                 student_id INT NOT NULL,
                 offering_id INT NOT NULL,
-                PRIMARY KEY (studednt_id, offering_id),
+                PRIMARY KEY (student_id, offering_id),
                 FOREIGN KEY (student_id)
                     REFERENCES students (student_id)
                     ON DELETE CASCADE,
@@ -243,7 +243,7 @@ class DataGenerator:
 
             yield dedent(f"""\
                 INSERT INTO assignment_type
-                VALUES ({asg_type_id}, '{asg_type}';""")
+                VALUES ({asg_type_id}, '{asg_type}');""")
 
 
     def generate_assignments(self):
@@ -293,7 +293,7 @@ class DataGenerator:
                 asg_id INT NOT NULL,
                 grade FLOAT NOT NULL,
                 FOREIGN KEY (student_ID)
-                     REFERNCES students (student_id)
+                     REFERENCES students (student_id)
                      ON DELETE CASCADE,
                 FOREIGN KEY (asg_id)
                      REFERENCES assignments (asg_id)
@@ -310,4 +310,4 @@ class DataGenerator:
 
                     yield dedent(f"""\
                         INSERT INTO grades
-                        VALUES ({student_id}, {asg_id}, {grade})""")
+                        VALUES ({student_id}, {asg_id}, {grade});""")

@@ -1,10 +1,5 @@
 import os
-import csv
-import random
 
-import requests
-from faker import Faker
-from bs4 import BeautifulSoup
 from dbconnection import DBConnection
 from datagenerator import DataGenerator
 
@@ -14,102 +9,57 @@ def check_data_dir():
         os.mkdir('data')
 
 
-def write_to_data_dir(filename, header, data):
-    with open(os.path.join('data', filename + ".csv"), 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerows(data)
-
-
-def index_data(data):
-    for i, row in enumerate(data, start=1):
-        yield [i] + row  # Prepend the row number to each row
-
-
-def generate_rooms():
-    header = ("room_id", "room")
-    data = []
-
-    for floor in ["B", "1", "2", "3", "4", "5", "6", "7", "8"]:
-        for wing in ["N", "E", "S", "W"]:
-            for room in range(1, 21):
-                room_number = f"{floor}{wing}{room:02d}"
-                data.append([room_number])
-
-    write_to_data_dir("rooms", header, index_data(data))
-
-
-def generate_teachers():
-    header = ("teacher_id", "teacher", "department")
-    data = []
-
-    departments = {
-        "Biology": 30105,
-        "Chemistry": 30106,
-        "Physics": 18378,
-        "CTE, Computer Science & Engineering": 18376,
-        "English": 18377,
-        "Health & PE": 18381,
-        "Mathematics": 18380,
-        "Social Studies": 18383,
-        "Special Education": 95973,
-        "Visual & Performing Arts": 314031,
-        "World Languages & ENL": 18379,
-    }
-
-    for department in departments:
-        request = requests.get(
-            f"https://www.bths.edu/apps/pages/index.jsp?uREC_ID={departments[department]}&type=d&termREC_ID=&pREC_ID=staff")
-        beautiful_soup = BeautifulSoup(request.content, "html.parser")
-        staff_category = beautiful_soup.find(id="staff").find_all(class_="staff-categoryStaffMember")
-        for a in staff_category:
-            teacher = a.dl.dt.get_text(strip=True)
-            if ". " in teacher:  # for Mr. or Ms. or Mrs. etc...
-                teacher = teacher.split(". ")[1]
-
-            data.append([teacher, department])
-
-    write_to_data_dir("teachers", header, index_data(data))
-
-
-# WILL BE RANDOM EVERY TIME
-def generate_students():
-    header = ("student_id", "first_name", "last_name")
-    data = []
-
-    faker = Faker()
-    Faker.seed("b")
-
-    for i in range(5000):
-        data.append([faker.first_name(), faker.last_name()])
-
-    write_to_data_dir("students", header, index_data(data))
-
 
 def main():
-    # test = [1, 2, 3, 4]
-    #
-    # for _ in range(5):
-    #     print(random.sample(test, len(test)))
-
     dg = DataGenerator("seed")
 
-    for query in dg.generate_rooms():
-        pass
-    for query in dg.generate_courses():
-        pass
-    for query in dg.generate_teachers():
-        pass
+    output_dir = 'output'
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
 
-    for query in dg.generate_course_offerings():
-        print(query)
-    #
-    # for query in dg.generate_students():
-    #     print(query)
+    with open(os.path.join(output_dir, 'departments_output.txt'), 'w') as f:
+        for query in dg.generate_departments():
+                f.write(query + '\n')
 
-    # for query in dg.generate_rooms():
-    #     print(query)
+    with open(os.path.join(output_dir, 'teachers_output.txt'), 'w') as f:
+        for query in dg.generate_teachers():
+            f.write(query + '\n')
 
+    with open(os.path.join(output_dir, 'rooms_output.txt'), 'w') as f:
+        for query in dg.generate_rooms():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'students_output.txt'), 'w') as f:
+        for query in dg.generate_students():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'course_types_output.txt'), 'w') as f:
+        for query in dg.generate_course_types():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'courses_output.txt'), 'w') as f:
+        for query in dg.generate_courses():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'course_offerings_output.txt'), 'w') as f:
+        for query in dg.generate_course_offerings():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'roster_output.txt'), 'w') as f:
+        for query in dg.generate_roster():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'assignment_types_output.txt'), 'w') as f:
+        for query in dg.generate_assignment_types():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'assignments_output.txt'), 'w') as f:
+        for query in dg.generate_assignments():
+            f.write(query + '\n')
+
+    with open(os.path.join(output_dir, 'grades_output.txt'), 'w') as f:
+        for query in dg.generate_grades():
+            f.write(query + '\n')
 
 if __name__ == "__main__":
     main()

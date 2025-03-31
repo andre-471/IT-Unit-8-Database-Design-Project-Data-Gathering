@@ -21,6 +21,7 @@ class DataGenerator:
         self.rooms: list[int] = []
         self.courses: list[int] = []
         self.course_types: list[int] = []
+        self.course_offerings: list[int] = []
         self.course_offerings_per_period: dict[int, list[int]] = defaultdict(list)
 
     # @staticmethod
@@ -194,6 +195,7 @@ class DataGenerator:
                 room_id = rooms_per_period[period].pop()
                 teacher_id = teachers_per_period[period].pop()
 
+                self.course_offerings.append(offering_id)
                 self.course_offerings_per_period[period].append(offering_id)
 
                 yield dedent(f"""\
@@ -226,21 +228,21 @@ class DataGenerator:
                     VALUES ({student_id}, {offering_id});""")
 
 
-    def generate_assignment_type(self):
+    def generate_assignment_types(self):
         yield dedent("""\
             CREATE TABLE assignment_type (
                 asg_type_id INT NOT NULL AUTO_INCREMENT,
                 type VARCHAR(255) NOT NULL,
                 PRIMARY KEY (asg_type_id)
             );""")
-        for row in DataGenerator.__read_csv("assignment_type"):
+        for row in DataGenerator.__read_csv("assignment_types"):
             asg_type_id, asg_type = row
-            asg_type = int(asg_type)
-            # self.assignment_types.append(asg_type_id)  do we need this?
+            asg_type_id = int(asg_type_id)
+            # self.assignment_types.append(asg_type_id)  do we need this? no
 
             yield dedent(f"""\
                 INSERT INTO assignment_type
-                VALUES ({asg_type_id}, {type};""")
+                VALUES ({asg_type_id}, '{asg_type}';""")
 
 
     def generate_assignments(self):
@@ -260,10 +262,10 @@ class DataGenerator:
             );""")
 
         asg_id = 1
-        for offering_id in self.course_offerings_per_period.values():
+        for offering_id in self.course_offerings:
             for _ in range(12):
-                asg_name = self.faker.sentence()
-                asg_type_id = random.choice(self.assignment_types)
+                asg_name = self.faker.sentence()  # some other assignment name generation type
+                asg_type_id = 2  # minor assignment
                 yield dedent(f"""\
                     INSERT INTO assignments
                     VALUES ({asg_id}, {asg_name}, {asg_type_id}, {offering_id});""")

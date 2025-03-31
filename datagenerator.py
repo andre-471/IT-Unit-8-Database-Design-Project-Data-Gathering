@@ -20,9 +20,10 @@ class DataGenerator:
         self.students: list[int] = []
         self.rooms: list[int] = []
         self.courses: list[int] = []
-        self.course_types: list[int] = []
         self.course_offerings: list[int] = []
         self.course_offerings_per_period: dict[int, list[int]] = defaultdict(list)
+        self.students_per_course_offering: dict[int, list[int]] = defaultdict(list)
+        self.assignments_per_course_offering: dict[int, list[int]] = defaultdict(list)
 
     # @staticmethod
     # def _index_data(data):       
@@ -118,7 +119,7 @@ class DataGenerator:
 
             yield dedent(f"""\
                 INSERT INTO students
-                VALUES ({student_id}, '{self.faker.first_name()}', '{self.faker.last_name()})';""")
+                VALUES ({student_id}, '{self.faker.first_name()}', '{self.faker.last_name()}');""")
 
     def generate_course_types(self):
         yield dedent("""\
@@ -133,11 +134,9 @@ class DataGenerator:
             crs_type_id, crs_type = row
             crs_type_id = int(crs_type_id)
 
-            self.course_types.append(crs_type_id)
-
             yield dedent(f"""\
                 INSERT INTO course_types
-                VALUES ({crs_type_id}, '{type}""")
+                VALUES ({crs_type_id}, '{type}');""")
 
     def generate_courses(self):
         yield dedent("""\
@@ -160,7 +159,7 @@ class DataGenerator:
 
             yield dedent(f"""\
                        INSERT INTO courses
-                       VALUES ({crs_id}, {crs_name}, {crs_type_id});""")
+                       VALUES ({crs_id}, '{crs_name}', {crs_type_id});""")
 
     def generate_course_offerings(self):
         yield dedent("""\
@@ -185,6 +184,7 @@ class DataGenerator:
         rooms_per_period = {}
         teachers_per_period = {}
         for period in range(1, 11):
+            # shuffle the rooms and teachers for each period with the random library
             rooms_per_period[period] = random.sample(self.rooms, len(self.rooms))
             teachers_per_period[period] = random.sample(self.teachers, len(self.teachers))
 
@@ -222,6 +222,7 @@ class DataGenerator:
         for student_id in self.students:
             for period in range(1, 11):
                 offering_id = random.choice(self.course_offerings_per_period[period])
+                self.students_per_course_offering[offering_id].append(student_id)
 
                 yield dedent(f"""\
                     INSERT INTO roster
@@ -263,17 +264,31 @@ class DataGenerator:
 
         asg_id = 1
         for offering_id in self.course_offerings:
-            for _ in range(12):
-                asg_name = self.faker.sentence()  # some other assignment name generation type
-                asg_type_id = 2  # minor assignment
+            for _ in range(3):
+                asg_name = self.faker.catch_phrase()
+                asg_type_id = 1  # major assignment
+
+                self.assignments_per_course_offering[offering_id].append(asg_id)
+
                 yield dedent(f"""\
                     INSERT INTO assignments
-                    VALUES ({asg_id}, {asg_name}, {asg_type_id}, {offering_id});""")
+                    VALUES ({asg_id}, '{asg_name}', {asg_type_id}, {offering_id});""")
+                asg_id += 1
+
+            for _ in range(12):
+                asg_name = self.faker.catch_phrase()
+                asg_type_id = 2  # minor assignment
+
+                self.assignments_per_course_offering[offering_id].append(asg_id)
+
+                yield dedent(f"""\
+                    INSERT INTO assignments
+                    VALUES ({asg_id}, '{asg_name}', {asg_type_id}, {offering_id});""")
                 asg_id += 1
 
     def generate_grades(self):
         yield dedent("""\
-            CREATE TABLE assignments (
+            CREATE TABLE grades (
                 student_id NOT NULL,
                 asg_id INT NOT NULL,
                 grade FLOAT NOT NULL,
@@ -284,3 +299,15 @@ class DataGenerator:
                      REFERENCES assignments (asg_id)
                      ON DELETE CASCADE
             );""")
+
+        for offering_id in self.course_offerings:
+            asg_ids = self.assignments_per_course_offering[offering_id]
+            student_ids = self.students_per_course_offering[offering_id]
+
+            for student_id in student_ids:
+                for asg_id in asg_ids:
+                    grade: float = round(random.uniform(75, 100), 2)
+
+                    yield dedent(f"""\
+                        INSERT INTO grades
+                        VALUES ({student_id}, {asg_id}, {grade})""")

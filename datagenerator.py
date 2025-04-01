@@ -1,11 +1,10 @@
+import csv
+import os
 import random
 from collections import defaultdict
-
-from faker import Faker
 from textwrap import dedent
 
-import os
-import csv
+from faker import Faker
 
 
 # for reference: https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html
@@ -24,11 +23,6 @@ class DataGenerator:
         self.course_offerings_per_period: dict[int, list[int]] = defaultdict(list)
         self.students_per_course_offering: dict[int, list[int]] = defaultdict(list)
         self.assignments_per_course_offering: dict[int, list[int]] = defaultdict(list)
-
-    # @staticmethod
-    # def _index_data(data):       
-    #     for i, row in enumerate(data, start=1):
-    #         yield [i] + row  # Prepend the row number to each row
 
     @staticmethod
     def __read_csv(filename):
@@ -79,7 +73,6 @@ class DataGenerator:
             yield dedent(f"""\
                 INSERT INTO teachers
                 VALUES ({teacher_id}, '{teacher_name}', {dept_id});""")
-
 
     # DONE
     def generate_rooms(self):
@@ -136,7 +129,7 @@ class DataGenerator:
 
             yield dedent(f"""\
                 INSERT INTO course_types
-                VALUES ({crs_type_id}, '{type}');""")
+                VALUES ({crs_type_id}, '{crs_type}');""")
 
     def generate_courses(self):
         yield dedent("""\
@@ -190,7 +183,7 @@ class DataGenerator:
 
         offering_id = 1
         for crs_id in self.courses:
-            for i in range(random.randint(1, 5)):
+            for _ in range(random.randint(1, 5)):
                 period = random.randint(1, 10)
                 room_id = rooms_per_period[period].pop()
                 teacher_id = teachers_per_period[period].pop()
@@ -203,7 +196,6 @@ class DataGenerator:
                     VALUES ({offering_id}, {crs_id}, {room_id}, {period}, {teacher_id});""")
 
                 offering_id += 1
-
 
     def generate_roster(self):
         yield dedent("""\
@@ -228,7 +220,6 @@ class DataGenerator:
                     INSERT INTO roster
                     VALUES ({student_id}, {offering_id});""")
 
-
     def generate_assignment_types(self):
         yield dedent("""\
             CREATE TABLE assignment_type (
@@ -244,7 +235,6 @@ class DataGenerator:
             yield dedent(f"""\
                 INSERT INTO assignment_type
                 VALUES ({asg_type_id}, '{asg_type}');""")
-
 
     def generate_assignments(self):
         yield dedent("""\

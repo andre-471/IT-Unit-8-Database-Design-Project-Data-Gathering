@@ -3,14 +3,7 @@ import os
 from dbconnection import DBConnection
 from datagenerator import DataGenerator
 
-
-def check_data_dir():
-    if not os.path.isdir('data'):
-        os.mkdir('data')
-
-
-
-def main():
+def check_queries():
     dg = DataGenerator("seed")
 
     output_dir = 'output'
@@ -19,7 +12,7 @@ def main():
 
     with open(os.path.join(output_dir, 'departments_output.txt'), 'w') as f:
         for query in dg.generate_departments():
-                f.write(query + '\n')
+            f.write(query + '\n')
 
     with open(os.path.join(output_dir, 'teachers_output.txt'), 'w') as f:
         for query in dg.generate_teachers():
@@ -60,6 +53,10 @@ def main():
     with open(os.path.join(output_dir, 'grades_output.txt'), 'w') as f:
         for query in dg.generate_grades():
             f.write(query + '\n')
+
+
+def main():
+    check_queries()
 
 if __name__ == "__main__":
     main()

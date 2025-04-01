@@ -1,9 +1,11 @@
 import atexit
 import os
 import signal
-from dotenv import load_dotenv
+
 import mysql.connector
+from dotenv import load_dotenv
 from mysql.connector import errorcode
+
 
 class DBConnection:
     def __init__(self):
@@ -12,8 +14,8 @@ class DBConnection:
         atexit.register(self.disconnect)
         signal.signal(signal.SIGINT, self.disconnect)
         signal.signal(signal.SIGTERM, self.disconnect)
-        
-        # self.connect()
+
+        self.connect()
 
     def connect(self):
         if self.connection:
@@ -24,13 +26,14 @@ class DBConnection:
 
         user = os.environ.get('DB_USERNAME')
         password = os.environ.get('DB_PASSWORD')
+        name = os.environ.get('DB_NAME')
 
         try:
             self.connection = mysql.connector.connect(
-                user=user, 
-                password=password, 
-                host='10.8.37.226', 
-                database='andrewz47_db'
+                user=user,
+                password=password,
+                host='10.8.37.226',
+                database=name
             )
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -55,4 +58,3 @@ class DBConnection:
 
         self.connection.commit()
         cursor.close()
-

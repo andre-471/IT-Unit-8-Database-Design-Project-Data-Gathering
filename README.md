@@ -1,8 +1,18 @@
-# Unit 8 Database Design Project Data Gathering (and Populating) aka Unit 8 Data GAP
+# Unit 8 Database Design Project Data Gathering _and Populating_ (GAP)
 
-## also this code is very inefficient
+## Usage:
+1. Create `.env` file in root directory with the following information:
+    ```text
+    DB_USERNAME=[YOUR MYSQL USERNAME]
+    DB_PASSWORD=[YOUR MYSQL PASSWORD]
+    DB_NAME=[THE MYSQL DATABASE TO POPULATE]
+    ```
+    to allow the script to populate the database.
+2. Run `main.py`.
 
-## notes:
+### also this code is very inefficient and it _ONLY RUNS ON THE SCHOOL NETWORK_ (unless the mysql server host is changed)
+
+## Roadmap:
 course_type and courses should be easy to populate (similar to the teachers one), but maybe use a CSV file instead of a dictionary (convert csv -> data structures)
 room is also easy
 

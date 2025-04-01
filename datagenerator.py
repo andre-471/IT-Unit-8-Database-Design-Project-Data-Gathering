@@ -81,7 +81,7 @@ class DataGenerator:
                 room_id INT NOT NULL AUTO_INCREMENT,
                 room VARCHAR(255) NOT NULL,
                 PRIMARY KEY (room_id),
-                UNIQUE KEY(room)
+                UNIQUE KEY (room)
             );""")
 
         room_id = 1
@@ -117,7 +117,7 @@ class DataGenerator:
     def generate_course_types(self):
         yield dedent("""\
             CREATE TABLE course_types (
-                crs_type_id INT NOT NULL,
+                crs_type_id INT NOT NULL AUTO_INCREMENT,
                 crs_type VARCHAR(255) NOT NULL,
                 PRIMARY KEY (crs_type_id),
                 UNIQUE KEY (crs_type)
@@ -134,7 +134,7 @@ class DataGenerator:
     def generate_courses(self):
         yield dedent("""\
             CREATE TABLE courses (
-                crs_id INT NOT NULL,
+                crs_id INT NOT NULL AUTO_INCREMENT,
                 crs_name VARCHAR(255) NOT NULL,
                 crs_type_id INT NOT NULL,
                 PRIMARY KEY (crs_id),
@@ -224,8 +224,9 @@ class DataGenerator:
         yield dedent("""\
             CREATE TABLE assignment_type (
                 asg_type_id INT NOT NULL AUTO_INCREMENT,
-                type VARCHAR(255) NOT NULL,
-                PRIMARY KEY (asg_type_id)
+                asg_type VARCHAR(255) NOT NULL,
+                PRIMARY KEY (asg_type_id),
+                UNIQUE KEY (asg_type)
             );""")
         for row in DataGenerator.__read_csv("assignment_types"):
             asg_type_id, asg_type = row
@@ -243,13 +244,13 @@ class DataGenerator:
                 asg_name VARCHAR(255) NOT NULL,
                 asg_type_id INT NOT NULL,
                 offering_id INT NOT NULL,
-                FOREIGN KEY (offering_id)
-                    REFERENCES course_offerings (offering_id)
-                    ON DELETE CASCADE,
+                PRIMARY KEY (asg_id),
                 FOREIGN KEY (asg_type_id)
                     REFERENCES assignment_type (asg_type_id)
                     ON DELETE CASCADE,
-                PRIMARY KEY (asg_id)
+                FOREIGN KEY (offering_id)
+                    REFERENCES course_offerings (offering_id)
+                    ON DELETE CASCADE
             );""")
 
         asg_id = 1
@@ -282,7 +283,8 @@ class DataGenerator:
                 student_id NOT NULL,
                 asg_id INT NOT NULL,
                 grade FLOAT NOT NULL,
-                FOREIGN KEY (student_ID)
+                PRIMARY KEY (student_id, asg_id),
+                FOREIGN KEY (student_id)
                      REFERENCES students (student_id)
                      ON DELETE CASCADE,
                 FOREIGN KEY (asg_id)

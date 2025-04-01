@@ -33,8 +33,9 @@ class DBConnection:
                 user=user,
                 password=password,
                 host='10.8.37.226',
-                database=name
+                database=name,
             )
+            self.connection.autocommit = True
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -56,5 +57,4 @@ class DBConnection:
 
         cursor.execute(query)
 
-        self.connection.commit()
         cursor.close()

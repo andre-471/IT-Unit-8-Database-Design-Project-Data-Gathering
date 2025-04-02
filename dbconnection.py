@@ -1,10 +1,12 @@
 import atexit
 import os
 import signal
+from typing import Generator
 
 import mysql.connector
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from mysql.connector import errorcode
+from mysql.connector.abstracts import MySQLCursorAbstract
 
 
 class DBConnection:
@@ -22,6 +24,9 @@ class DBConnection:
             print("Connection already exists")
             return
 
+        if not find_dotenv():
+            raise FileNotFoundError(".env file doesn't exist")
+
         load_dotenv()
 
         user = os.environ.get('DB_USERNAME')
@@ -34,8 +39,8 @@ class DBConnection:
                 password=password,
                 host='10.8.37.226',
                 database=name,
+                autocommit=True
             )
-            self.connection.autocommit = True
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -52,9 +57,15 @@ class DBConnection:
         else:
             print("No connection to close")
 
-    def execute(self, query):
-        cursor = self.connection.cursor()
+    def query(self, query) -> list[tuple]:
+        cursor: MySQLCursorAbstract
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
 
-        cursor.execute(query)
+            return cursor.fetchall()
 
-        cursor.close()
+    def execute_many(self, queries: Generator) -> None:
+        cursor: MySQLCursorAbstract
+        with self.connection.cursor() as cursor:
+            for query in queries:
+                cursor.execute(query)

@@ -32,7 +32,6 @@ class DataGenerator:
             for row in reader:
                 yield row
 
-    # DONE
     def generate_departments(self):
         yield dedent("""\
             CREATE TABLE departments (
@@ -50,7 +49,6 @@ class DataGenerator:
                 INSERT INTO departments
                 VALUES ({dept_id}, '{dept_name}');""")
 
-    # DONE
     def generate_teachers(self):
         yield dedent("""\
             CREATE TABLE teachers (
@@ -74,7 +72,6 @@ class DataGenerator:
                 INSERT INTO teachers
                 VALUES ({teacher_id}, '{teacher_name}', {dept_id});""")
 
-    # DONE
     def generate_rooms(self):
         yield dedent("""\
             CREATE TABLE rooms (
@@ -97,7 +94,6 @@ class DataGenerator:
                         VALUES ({room_id}, '{room}');""")
                     room_id += 1
 
-    # DONE
     def generate_students(self):
         yield dedent("""\
             CREATE TABLE students (

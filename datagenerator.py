@@ -101,7 +101,7 @@ class DataGenerator:
                 first_name VARCHAR(255) NOT NULL,
                 last_name VARCHAR(255) NOT NULL,
                 PRIMARY KEY (student_id)
-                """)
+                );""")
 
         for student_id in range(1, 5001):
             self.students.append(student_id)

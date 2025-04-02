@@ -74,8 +74,8 @@ def execute_all_queries():
 
 
 def main():
-    # check_queries()
-    execute_all_queries()
+    check_queries()
+    # execute_all_queries()
 
 
 if __name__ == "__main__":

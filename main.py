@@ -35,8 +35,8 @@ def check_queries():
         for query in dg.generate_courses():
             f.write(query + '\n')
 
-    with open(os.path.join(output_dir, 'course_offerings_output.sql'), 'w') as f:
-        for query in dg.generate_course_offerings():
+    with open(os.path.join(output_dir, 'offerings_output.sql'), 'w') as f:
+        for query in dg.generate_offerings():
             f.write(query + '\n')
 
     with open(os.path.join(output_dir, 'roster_output.sql'), 'w') as f:
@@ -66,7 +66,7 @@ def execute_all_queries():
     db.execute_many(dg.generate_students())
     db.execute_many(dg.generate_course_types())
     db.execute_many(dg.generate_courses())
-    db.execute_many(dg.generate_course_offerings())
+    db.execute_many(dg.generate_offerings())
     db.execute_many(dg.generate_roster())
     db.execute_many(dg.generate_assignment_types())
     db.execute_many(dg.generate_assignments())

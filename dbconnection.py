@@ -39,7 +39,8 @@ class DBConnection:
                 password=password,
                 host='10.8.37.226',
                 database=name,
-                autocommit=True
+                autocommit=True,
+                raise_on_warnings=True
             )
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -48,6 +49,8 @@ class DBConnection:
                 print("Database does not exist")
             else:
                 print(err)
+
+            exit(1)
 
     def disconnect(self):
         if self.connection:
@@ -69,3 +72,4 @@ class DBConnection:
         with self.connection.cursor() as cursor:
             for query in queries:
                 cursor.execute(query)
+

@@ -19,8 +19,8 @@ class DataGenerator:
         self.students: list[int] = []
         self.rooms: list[int] = []
         self.courses: list[int] = []
-        self.course_offerings: list[int] = []
-        self.course_offerings_per_period: dict[int, list[int]] = defaultdict(list)
+        self.offerings: list[int] = []
+        self.offerings_per_period: dict[int, list[int]] = defaultdict(list)
         self.students_per_course_offering: dict[int, list[int]] = defaultdict(list)
         self.assignments_per_course_offering: dict[int, list[int]] = defaultdict(list)
 
@@ -32,8 +32,12 @@ class DataGenerator:
             for row in reader:
                 yield row
 
+    @staticmethod
+    def format(query: str):
+        return dedent(query.replace("'", "''"))  # this does not work
+
     def generate_departments(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE departments (
                 dept_id INT NOT NULL AUTO_INCREMENT,
                 dept_name VARCHAR(255) NOT NULL,
@@ -45,12 +49,12 @@ class DataGenerator:
             dept_id, dept_name = row
             dept_id = int(dept_id)
 
-            yield dedent(f"""\
+            yield self.format(f"""\
                 INSERT INTO departments
                 VALUES ({dept_id}, '{dept_name}');""")
 
     def generate_teachers(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE teachers (
                 teacher_id INT NOT NULL AUTO_INCREMENT,
                 teacher_name VARCHAR(255) NOT NULL,
@@ -68,12 +72,12 @@ class DataGenerator:
 
             self.teachers.append(teacher_id)
 
-            yield dedent(f"""\
+            yield self.format(f"""\
                 INSERT INTO teachers
                 VALUES ({teacher_id}, '{teacher_name}', {dept_id});""")
 
     def generate_rooms(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE rooms (
                 room_id INT NOT NULL AUTO_INCREMENT,
                 room VARCHAR(255) NOT NULL,
@@ -89,29 +93,29 @@ class DataGenerator:
 
                     self.rooms.append(room_id)
 
-                    yield dedent(f"""\
+                    yield self.format(f"""\
                         INSERT INTO rooms
                         VALUES ({room_id}, '{room}');""")
                     room_id += 1
 
     def generate_students(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE students (
                 student_id INT NOT NULL AUTO_INCREMENT,
                 first_name VARCHAR(255) NOT NULL,
                 last_name VARCHAR(255) NOT NULL,
                 PRIMARY KEY (student_id)
-                );""")
+            );""")
 
         for student_id in range(1, 5001):
             self.students.append(student_id)
 
-            yield dedent(f"""\
+            yield self.format(f"""\
                 INSERT INTO students
                 VALUES ({student_id}, '{self.faker.first_name()}', '{self.faker.last_name()}');""")
 
     def generate_course_types(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE course_types (
                 crs_type_id INT NOT NULL AUTO_INCREMENT,
                 crs_type VARCHAR(255) NOT NULL,
@@ -123,12 +127,12 @@ class DataGenerator:
             crs_type_id, crs_type = row
             crs_type_id = int(crs_type_id)
 
-            yield dedent(f"""\
+            yield self.format(f"""\
                 INSERT INTO course_types
                 VALUES ({crs_type_id}, '{crs_type}');""")
 
     def generate_courses(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE courses (
                 crs_id INT NOT NULL AUTO_INCREMENT,
                 crs_name VARCHAR(255) NOT NULL,
@@ -146,13 +150,13 @@ class DataGenerator:
 
             self.courses.append(crs_id)
 
-            yield dedent(f"""\
+            yield self.format(f"""\
                        INSERT INTO courses
                        VALUES ({crs_id}, '{crs_name}', {crs_type_id});""")
 
-    def generate_course_offerings(self):
-        yield dedent("""\
-            CREATE TABLE course_offerings (
+    def generate_offerings(self):
+        yield self.format("""\
+            CREATE TABLE offerings (
                 offering_id INT NOT NULL AUTO_INCREMENT,
                 crs_id INT NOT NULL,
                 room_id INT NOT NULL,
@@ -184,17 +188,17 @@ class DataGenerator:
                 room_id = rooms_per_period[period].pop()
                 teacher_id = teachers_per_period[period].pop()
 
-                self.course_offerings.append(offering_id)
-                self.course_offerings_per_period[period].append(offering_id)
+                self.offerings.append(offering_id)
+                self.offerings_per_period[period].append(offering_id)
 
-                yield dedent(f"""\
-                    INSERT INTO course_offerings
+                yield self.format(f"""\
+                    INSERT INTO offerings
                     VALUES ({offering_id}, {crs_id}, {room_id}, {period}, {teacher_id});""")
 
                 offering_id += 1
 
     def generate_roster(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE roster (
                 student_id INT NOT NULL,
                 offering_id INT NOT NULL,
@@ -203,22 +207,22 @@ class DataGenerator:
                     REFERENCES students (student_id)
                     ON DELETE CASCADE,
                 FOREIGN KEY (offering_id)
-                    REFERENCES course_offerings (offering_id)
+                    REFERENCES offerings (offering_id)
                     ON DELETE CASCADE
             );""")
 
         for student_id in self.students:
             for period in range(1, 11):
-                offering_id = random.choice(self.course_offerings_per_period[period])
+                offering_id = random.choice(self.offerings_per_period[period])
                 self.students_per_course_offering[offering_id].append(student_id)
 
-                yield dedent(f"""\
+                yield self.format(f"""\
                     INSERT INTO roster
                     VALUES ({student_id}, {offering_id});""")
 
     def generate_assignment_types(self):
-        yield dedent("""\
-            CREATE TABLE assignment_type (
+        yield self.format("""\
+            CREATE TABLE assignment_types (
                 asg_type_id INT NOT NULL AUTO_INCREMENT,
                 asg_type VARCHAR(255) NOT NULL,
                 PRIMARY KEY (asg_type_id),
@@ -229,12 +233,12 @@ class DataGenerator:
             asg_type_id = int(asg_type_id)
             # self.assignment_types.append(asg_type_id)  do we need this? no
 
-            yield dedent(f"""\
-                INSERT INTO assignment_type
+            yield self.format(f"""\
+                INSERT INTO assignment_types
                 VALUES ({asg_type_id}, '{asg_type}');""")
 
     def generate_assignments(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE assignments (
                 asg_id INT NOT NULL AUTO_INCREMENT,
                 asg_name VARCHAR(255) NOT NULL,
@@ -242,22 +246,22 @@ class DataGenerator:
                 offering_id INT NOT NULL,
                 PRIMARY KEY (asg_id),
                 FOREIGN KEY (asg_type_id)
-                    REFERENCES assignment_type (asg_type_id)
+                    REFERENCES assignment_types (asg_type_id)
                     ON DELETE CASCADE,
                 FOREIGN KEY (offering_id)
-                    REFERENCES course_offerings (offering_id)
+                    REFERENCES offerings (offering_id)
                     ON DELETE CASCADE
             );""")
 
         asg_id = 1
-        for offering_id in self.course_offerings:
+        for offering_id in self.offerings:
             for _ in range(3):
                 asg_name = self.faker.catch_phrase()
                 asg_type_id = 1  # major assignment
 
                 self.assignments_per_course_offering[offering_id].append(asg_id)
 
-                yield dedent(f"""\
+                yield self.format(f"""\
                     INSERT INTO assignments
                     VALUES ({asg_id}, '{asg_name}', {asg_type_id}, {offering_id});""")
                 asg_id += 1
@@ -268,13 +272,13 @@ class DataGenerator:
 
                 self.assignments_per_course_offering[offering_id].append(asg_id)
 
-                yield dedent(f"""\
+                yield self.format(f"""\
                     INSERT INTO assignments
                     VALUES ({asg_id}, '{asg_name}', {asg_type_id}, {offering_id});""")
                 asg_id += 1
 
     def generate_grades(self):
-        yield dedent("""\
+        yield self.format("""\
             CREATE TABLE grades (
                 student_id NOT NULL,
                 asg_id INT NOT NULL,
@@ -288,7 +292,7 @@ class DataGenerator:
                      ON DELETE CASCADE
             );""")
 
-        for offering_id in self.course_offerings:
+        for offering_id in self.offerings:
             asg_ids = self.assignments_per_course_offering[offering_id]
             student_ids = self.students_per_course_offering[offering_id]
 
@@ -296,6 +300,6 @@ class DataGenerator:
                 for asg_id in asg_ids:
                     grade: float = round(random.uniform(75, 100), 2)
 
-                    yield dedent(f"""\
+                    yield self.format(f"""\
                         INSERT INTO grades
                         VALUES ({student_id}, {asg_id}, {grade});""")

@@ -4,12 +4,16 @@ from datagenerator import DataGenerator
 from dbconnection import DBConnection
 
 
-def check_queries():
-    dg = DataGenerator("seed")
+def check_queries(seed=None):
+    dg = DataGenerator(seed)
 
     output_dir = 'output'
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
+
+    with open(os.path.join(output_dir, 'clear_output.sql'), 'w') as f:
+        for query in dg.clear_data():
+            f.write(query + '\n')
 
     with open(os.path.join(output_dir, 'departments_output.sql'), 'w') as f:
         for query in dg.generate_departments():
@@ -56,10 +60,11 @@ def check_queries():
             f.write(query + '\n')
 
 
-def execute_all_queries():
+def execute_all_queries(seed=None):
     db = DBConnection()
-    dg = DataGenerator("seed")
+    dg = DataGenerator(seed)
 
+    # db.execute_many(dg.clear_data())
     db.execute_many(dg.generate_departments())
     db.execute_many(dg.generate_teachers())
     db.execute_many(dg.generate_rooms())
@@ -74,8 +79,8 @@ def execute_all_queries():
 
 
 def main():
-    check_queries()
-    # execute_all_queries()
+    # check_queries("hi")
+    execute_all_queries("hi")
 
 
 if __name__ == "__main__":

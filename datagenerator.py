@@ -130,9 +130,6 @@ class DataGenerator:
 
     def generate_students(self):
         yield dedent("""\
-            DROP TABLE IF EXISTS students;""")
-
-        yield dedent("""\
             CREATE TABLE students (
                 student_id INT NOT NULL AUTO_INCREMENT,
                 first_name VARCHAR(255) NOT NULL,
@@ -315,7 +312,7 @@ class DataGenerator:
     def generate_grades(self):
         yield dedent("""\
             CREATE TABLE grades (
-                student_id NOT NULL,
+                student_id INT NOT NULL,
                 asg_id INT NOT NULL,
                 grade FLOAT NOT NULL,
                 PRIMARY KEY (student_id, asg_id),

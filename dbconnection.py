@@ -72,4 +72,3 @@ class DBConnection:
         with self.connection.cursor() as cursor:
             for query in queries:
                 cursor.execute(query)
-

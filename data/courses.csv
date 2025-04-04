@@ -91,21 +91,20 @@ crs_id,crs_type_id,crs_name
 90,3,AP Macroeconomics
 91,3,AP Microeconomics
 92,3,AP Comparative Government
-93,3,AP Psychology
-94,3,AP Human Geography
-95,1,Sociology
-96,1,Cultural Anthropology
-97,1,Physical Anthropology
-98,1,Adobe Digital Video
-99,1,Adobe Visual Design
-100,1,Architectural Drawing w/ CAD
-101,1,Digital Animation
-102,1,Industrial Design
-103,1,Media
-104,1,PLTW CEA
-105,1,PLTW DDP
-106,1,Orchestra
-107,1,Band
-108,1,Chorus
-109,1,Studio Art
-110,3,AP 2D Art and Design
+93,3,AP Human Geography
+94,1,Sociology
+95,1,Cultural Anthropology
+96,1,Physical Anthropology
+97,1,Adobe Digital Video
+98,1,Adobe Visual Design
+99,1,Architectural Drawing w/ CAD
+100,1,Digital Animation
+101,1,Industrial Design
+102,1,Media
+103,1,PLTW CEA
+104,1,PLTW DDP
+105,1,Orchestra
+106,1,Band
+107,1,Chorus
+108,1,Studio Art
+119,3,AP 2D Art and Design

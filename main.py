@@ -61,6 +61,8 @@ def check_queries(seed=None):
 
 
 def execute_all_queries(seed=None):
+    # this is more inefficient than just generating the sql file and running it on the server itself
+    # 20 min vs 1 hr
     db = DBConnection()
     dg = DataGenerator(seed)
 
@@ -79,8 +81,8 @@ def execute_all_queries(seed=None):
 
 
 def main():
-    # check_queries("hi")
-    execute_all_queries("hi")
+    check_queries("hi")
+    # execute_all_queries("hi")
 
 
 if __name__ == "__main__":

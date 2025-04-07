@@ -1,63 +1,49 @@
 import os
 
+from dotenv import find_dotenv, load_dotenv
+
 from datagenerator import DataGenerator
 from dbconnection import DBConnection
 
 
 def check_queries(seed=None):
-    dg = DataGenerator(seed)
+    if not find_dotenv():
+        raise FileNotFoundError(".env file doesn't exist")
 
+    dg = DataGenerator(seed)
     output_dir = 'output'
+    sql_runner = 'run_sql.sh'
+
+    load_dotenv()
+    user = os.environ.get('DB_USERNAME')
+    password = os.environ.get('DB_PASSWORD')
+    name = os.environ.get('DB_NAME')
+
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
-    with open(os.path.join(output_dir, 'clear_output.sql'), 'w') as f:
-        for query in dg.clear_data():
-            f.write(query + '\n')
+    sql_files = [
+        ('clear_output.sql', dg.clear_data()),
+        ('departments_output.sql', dg.generate_departments()),
+        ('teachers_output.sql', dg.generate_teachers()),
+        ('rooms_output.sql', dg.generate_rooms()),
+        ('students_output.sql', dg.generate_students()),
+        ('course_types_output.sql', dg.generate_course_types()),
+        ('courses_output.sql', dg.generate_courses()),
+        ('offerings_output.sql', dg.generate_offerings()),
+        ('roster_output.sql', dg.generate_roster()),
+        ('assignment_types_output.sql', dg.generate_assignment_types()),
+        ('assignments_output.sql', dg.generate_assignments()),
+        ('grades_output.sql', dg.generate_grades())
+    ]
 
-    with open(os.path.join(output_dir, 'departments_output.sql'), 'w') as f:
-        for query in dg.generate_departments():
-            f.write(query + '\n')
+    with open(sql_runner, 'w') as s:
+        for filename, queries in sql_files:
+            with open(os.path.join(output_dir, filename), 'w') as f:
+                for query in queries:
+                    f.write(query + '\n')
+            s.write(f"mysql -u {user} -p {password} -h 10.8.37.226 -D {name} < output/{filename}")
 
-    with open(os.path.join(output_dir, 'teachers_output.sql'), 'w') as f:
-        for query in dg.generate_teachers():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'rooms_output.sql'), 'w') as f:
-        for query in dg.generate_rooms():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'students_output.sql'), 'w') as f:
-        for query in dg.generate_students():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'course_types_output.sql'), 'w') as f:
-        for query in dg.generate_course_types():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'courses_output.sql'), 'w') as f:
-        for query in dg.generate_courses():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'offerings_output.sql'), 'w') as f:
-        for query in dg.generate_offerings():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'roster_output.sql'), 'w') as f:
-        for query in dg.generate_roster():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'assignment_types_output.sql'), 'w') as f:
-        for query in dg.generate_assignment_types():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'assignments_output.sql'), 'w') as f:
-        for query in dg.generate_assignments():
-            f.write(query + '\n')
-
-    with open(os.path.join(output_dir, 'grades_output.sql'), 'w') as f:
-        for query in dg.generate_grades():
-            f.write(query + '\n')
 
 
 def execute_all_queries(seed=None):

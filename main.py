@@ -7,8 +7,34 @@ from dbconnection import DBConnection
 
 import paramiko, paramiko.util
 
+def generate_queries_only(seed=None):
+    dg = DataGenerator(seed)
+    output_dir = "sql_files"
 
-def run_queries_on_server(seed=None):
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+
+    sql_files = [
+        ("clear_output.sql", dg.clear_data()),
+        ("departments_output.sql", dg.generate_departments()),
+        ("teachers_output.sql", dg.generate_teachers()),
+        ("rooms_output.sql", dg.generate_rooms()),
+        ("students_output.sql", dg.generate_students()),
+        ("course_types_output.sql", dg.generate_course_types()),
+        ("courses_output.sql", dg.generate_courses()),
+        ("offerings_output.sql", dg.generate_offerings()),
+        ("roster_output.sql", dg.generate_roster()),
+        ("assignment_types_output.sql", dg.generate_assignment_types()),
+        ("assignments_output.sql", dg.generate_assignments()),
+        ("grades_output.sql", dg.generate_grades())
+    ]
+
+    for filename, queries in sql_files:
+        with open(os.path.join(output_dir, filename), "w") as f:
+            for query in queries:
+                f.write(query + "\n")
+
+def generate_and_run_queries_on_server(seed=None):
     if not find_dotenv():
         raise FileNotFoundError(".env file doesn't exist")
 
@@ -97,7 +123,8 @@ def execute_all_queries(seed=None):
 
 
 def main():
-    run_queries_on_server("hi")
+    generate_queries_only("hi")
+    # generate_and_run_queries_on_server("hi")
     # execute_all_queries("hi")
 
 

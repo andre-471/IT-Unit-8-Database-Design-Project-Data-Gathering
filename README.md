@@ -14,7 +14,9 @@
 
 ### also this code is very inefficient and it _ONLY RUNS ON THE SCHOOL NETWORK_ (unless the mysql server host is changed)
 
-## Roadmap:
+## Development:
+
+### Roadmap:
 course_type and courses should be easy to populate (similar to the teachers one), but maybe use a CSV file instead of a dictionary (convert csv -> data structures)
 room is also easy
 
@@ -40,3 +42,8 @@ for grades:
 - loop through each asg_id and add it for student
 
 use seed to guarantee the same values for every generation of data
+
+
+### Saving Dependencies:
+1. `pip install pipreqs`
+2. `pipreqs . --ignore ".venv"`

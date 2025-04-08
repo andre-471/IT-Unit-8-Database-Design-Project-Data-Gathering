@@ -74,6 +74,7 @@ def run_queries_on_server(seed=None):
         ssh.exec_command(f"chmod +x /home/{linux_user}/Projects/Database_Design_Project/{sql_runner}")
         ssh.exec_command(f"nohup /home/{linux_user}/Projects/Database_Design_Project/{sql_runner} &> /home/{linux_user}/Projects/Database_Design_Project/{sql_runner}.log &")
 
+    os.remove(sql_runner)
 
 def execute_all_queries(seed=None):
     # this is more inefficient than just generating the sql file and running it on the server itself
